@@ -37,7 +37,7 @@ public:
 		momentum = 3000;
 		mass = 105.658367;
 		velocity = 1 / sqrt(1 + mass * mass / momentum / momentum);
-		x = 3;
+		x = 5;
 		y = 0;
 		angle = 0;
 	}
@@ -53,8 +53,8 @@ int main() {
 	//material 6x10 cm, L=10
 	//pixel 1x1 cm
 	int nrow = 10;
-	int ncol = 6;
-
+	int ncol = 10;
+	int nparticles = 10;
 
 
 	//init materials
@@ -69,79 +69,81 @@ int main() {
 	}
 
 
-
-	//init particle
-	Particle particle;
-
-
-
-	//move
-
-	random_device rd;
-	mt19937 gen(rd());
+	for (int p = 0; p < nparticles; p++) {
+		//init particle
+		Particle particle;
+		particle.x = (double)(rand() % 11000)/1000;
 
 
-	for (int n = 0; n < nrow; n++) {
+
+		//move
+
+		random_device rd;
+		mt19937 gen(rd());
 
 		cout << particle.x << " , " << particle.y << endl;
-		cout << particle.angle << endl;
-		cout << particle.momentum << endl << endl;
+		cout << particle.angle << endl << endl;
+
+		for (int n = 0; n < nrow; n++) {
+
+			//cout << particle.x << " , " << particle.y << endl;
+			//cout << particle.angle << endl;
+			//cout << particle.momentum << endl << endl;
 
 
-		double row, col;
+			double row, col;
 
-		double x = particle.x;
-		double y = particle.y;
+			double x = particle.x;
+			double y = particle.y;
 
-		for (int m = 0; m < ncol; m++) {
-			if (x>=m&&x<m+1) {
-				col = m;
-				break;
+			for (int m = 0; m < ncol; m++) {
+				if (x >= m && x < m + 1) {
+					col = m;
+					break;
+				}
 			}
+
+			for (int m = 0; m < nrow; m++) {
+				if (y >= m && y < m + 1) {
+					row = m;
+					break;
+				}
+			}
+
+
+
+			//calculating change of angle 
+
+			double LX0 = 1 / rows[row][col]->X0;
+			//double beta = velocity;
+			double stddev = 13.6 / (particle.velocity*particle.momentum)*sqrt(LX0)*(1 + 0.0038*log(LX0));
+
+			normal_distribution<double> ndist(0, stddev);
+
+			particle.angle += ndist(gen);
+
+
+
+			//calculating next x
+			double dx = tan(particle.angle);
+			particle.x += dx;
+			particle.y += 1;
+
+
+
+			//calculating energy drop
+			double EnergyDrop = (1 / e) *(LX0)*particle.momentum;
+			particle.momentum -= EnergyDrop;
+
 		}
 
-		for (int m = 0; m < nrow; m++) {
-			if (y >= m && y < m + 1) {
-				row = m;
-				break;
-			}
-		}
+		cout << particle.x << " , " << particle.y << endl;
+		cout << particle.angle << endl << endl << endl;
+		//cout << particle.momentum << endl;
 
-
-
-		//calculating change of angle 
-
-		double LX0 = 1 / rows[row][col]->X0;
-		//double beta = velocity;
-		double stddev = 13.6  / (particle.velocity*particle.momentum)*sqrt(LX0)*(1 + 0.0038*log(LX0));
-
-		normal_distribution<double> ndist(0, stddev);
-
-		particle.angle += ndist(gen);
-
-
-
-		//calculating next x
-		double dx = tan(particle.angle);
-		if (particle.angle < 0) { dx = -dx; }
-		particle.x += dx;
-		particle.y += 1;
-
-
-
-		//calculating energy drop
-		double EnergyDrop = (1 / e) *(LX0)*particle.momentum;
-		particle.momentum -= EnergyDrop;
 
 	}
-
-	cout << particle.x << " , " << particle.y << endl;
-	cout << particle.angle << endl;
-	cout << particle.momentum << endl;
-
-
-
-
+	
 	int confirm;
 	cout << "Enter k to close:";
 	cin >> confirm;
