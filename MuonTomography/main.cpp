@@ -50,12 +50,13 @@ public:
 
 
 int main() {
+	ofstream writeOF;
 	//material 6x10 cm, L=10
 	//pixel 1x1 cm
 	int nrow = 10;
 	int ncol = 10;
-	int nparticles = 10;
-
+	int nparticles = 10000;
+	int los;
 
 	//init materials
 	vector<vector<Material*>> rows;
@@ -68,11 +69,13 @@ int main() {
 		rows.push_back(column);
 	}
 
-
+	writeOF.open("outputfile.dat");
 	for (int p = 0; p < nparticles; p++) {
 		//init particle
 		Particle particle;
-		particle.x = (double)(rand() % 11000)/1000;
+		particle.x = (double)(rand() % 10000)/1000;
+		double x1 = particle.x;
+		double a1 = particle.angle;
 
 
 
@@ -81,8 +84,8 @@ int main() {
 		random_device rd;
 		mt19937 gen(rd());
 
-		cout << particle.x << " , " << particle.y << endl;
-		cout << particle.angle << endl << endl;
+		//cout << particle.x << " , " << particle.y << endl;
+		//cout << particle.angle << endl << endl;
 
 		for (int n = 0; n < nrow; n++) {
 
@@ -137,16 +140,25 @@ int main() {
 
 		}
 
-		cout << particle.x << " , " << particle.y << endl;
-		cout << particle.angle << endl << endl << endl;
+		//cout << particle.x << " , " << particle.y << endl;
+		//cout << particle.angle << endl << endl << endl;
 		//cout << particle.momentum << endl;
+		double x2 = particle.x;
+		double a2 = particle.angle;
 
+
+		//counting cross point
+		double x = (sin(a1)*(x2*cos(a2) - x1 * cos(a2) - 10 * sin(a2)))/(sin(a1)*cos(a2)-sin(a2)*cos(a1))+x1;
+		double y = (cos(a1)*(x2*cos(a2) - x1 * cos(a2) - 10 * sin(a2)))/(sin(a1)*cos(a2)-sin(a2)*cos(a1));
+		writeOF << x<<'\t'<< y << endl;
 
 	}
 	
+	writeOF.close();
+
 	int confirm;
 	cout << "Enter k to close:";
-	cin >> confirm;
+	//cin >> confirm;
 
 
 
