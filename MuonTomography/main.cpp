@@ -4,6 +4,32 @@
 
 void move(vector<vector<Material*>> rows, Particle* particle);
 
+void random_angles(int thickness, int nparticles) {
+	ofstream writeOF;
+	writeOF.open("outputfile_randomtest"+to_string(thickness)+ ".dat");
+	vector<Material*>  material;
+	for (int i = 0; i < thickness; i++) {
+		material.push_back(new Material(0, i, 36.1));
+	}
+	
+	random_device rd;
+	mt19937 gen(rd());
+	Particle* particle = new Particle(3000, 0, 0, 0);
+	double LX0 = thickness / material[0]->X0;
+	double stddev = 13.6 / (particle->velocity*particle->momentum)*sqrt(LX0)*(1 + 0.0038*log(LX0));
+	normal_distribution<double> ndist(0, stddev);
+
+
+	for (int m = 0; m < nparticles; m++) {
+		Particle* p = new Particle(3000, 0, 0, 0);
+		double angle = 0;
+		for (int n = 0; n < thickness; n++) {
+			p->angle += ndist(gen);
+		}
+		writeOF << p->angle << endl;
+	}
+	writeOF.close();
+}
 
 void start_test(vector<vector<Material*>> rows, int nparticles) {
 	ofstream writeOF;
@@ -123,7 +149,10 @@ int main() {
 	//init materials
 	vector<vector<Material*>> rows = init_material(ncol, nrow);
 
-	start_test(rows, nparticles);
+	random_angles(1, 10000);
+	random_angles(10, 10000);
+
+	//start_test(rows, nparticles);
 	//int confirm;
 	//cin >> confirm;
 
