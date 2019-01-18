@@ -8,10 +8,13 @@ void move(vector<vector<Material*>> rows, Particle* particle);
 void start_test(vector<vector<Material*>> rows, int nparticles) {
 	ofstream writeOF;
 	writeOF.open("outputfile.dat");
-
+	//srand(time(NULL));
+	//(double)(rand() % 10000) / 1000
+	//int  xx = 0;
 	for (int p = 0; p < nparticles; p++) {
 		//init particle
-		Particle* particle = new Particle(3000, 0, (double)(rand() % 10000) / 1000, 0);
+		double xx = fmod((double)((100 * p / (double)nparticles)),10);
+		Particle* particle = new Particle(3000, 0, xx, 0);
 		double x1 = particle->x;
 		double a1 = particle->angle;
 
@@ -66,8 +69,8 @@ void move(vector<vector<Material*>> rows, Particle* particle) {
 		double stddev = 13.6 / (particle->velocity*particle->momentum)*sqrt(LX0)*(1 + 0.0038*log(LX0));
 
 		normal_distribution<double> ndist(0, stddev);
-
-		particle->angle += ndist(gen);
+		double value = ndist(gen);
+		particle->angle += value;
 
 
 
@@ -95,7 +98,13 @@ vector<vector<Material*>> init_material(double width, double length) {
 
 		vector<Material*> column;
 		for (int m = 0; m < width; m++) {
-			column.push_back(new Material(n, m, 36.1));
+			if (m > 5) {
+				column.push_back(new Material(n, m, 10000000));
+
+			}
+			else {
+				column.push_back(new Material(n, m, 1));
+			}
 		}
 		rows.push_back(column);
 	}

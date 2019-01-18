@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <ctime>
 
 #include "Particle.h"
 #include "Material.h"
