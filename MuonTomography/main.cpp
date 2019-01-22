@@ -17,6 +17,7 @@ void random_angles(int thickness, int nparticles) {
 	Particle* particle = new Particle(3000, 0, 0, 0);
 	double LX0 = thickness / material[0]->X0;
 	double stddev = 13.6 / (particle->velocity*particle->momentum)*sqrt(LX0)*(1 + 0.0038*log(LX0));
+	cout << stddev << endl;
 	normal_distribution<double> ndist(0, stddev);
 
 
@@ -124,12 +125,12 @@ vector<vector<Material*>> init_material(double width, double length) {
 
 		vector<Material*> column;
 		for (int m = 0; m < width; m++) {
-			if (m > 5) {
-				column.push_back(new Material(n, m, 10000000));
+			if (m>5&&n<5) {
+				column.push_back(new Material(n, m, 0.32));
 
 			}
 			else {
-				column.push_back(new Material(n, m, 1));
+				column.push_back(new Material(n, m, 10.7));
 			}
 		}
 		rows.push_back(column);
@@ -144,15 +145,15 @@ int main() {
 	//pixel 1x1 cm
 	int nrow = 10;
 	int ncol = 10;
-	int nparticles = 100000;
+	int nparticles = 1000000;
 
 	//init materials
 	vector<vector<Material*>> rows = init_material(ncol, nrow);
 
-	random_angles(1, 10000);
-	random_angles(10, 10000);
+	//random_angles(1, 1000000);
+	//random_angles(10, 1000000);
 
-	//start_test(rows, nparticles);
+	start_test(rows, nparticles);
 	//int confirm;
 	//cin >> confirm;
 
